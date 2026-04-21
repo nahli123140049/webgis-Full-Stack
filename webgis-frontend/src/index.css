@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 14px;
+}
