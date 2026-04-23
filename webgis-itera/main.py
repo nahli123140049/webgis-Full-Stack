@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware # Import ini
 from contextlib import asynccontextmanager
-from database import get_pool, close_pool
+from database import get_pool, close_pool, init_database
+from routers.auth import router as auth_router
 from routers.fasilitas import router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await get_pool()
+    await init_database()
     yield
     await close_pool()
 
@@ -28,4 +30,5 @@ app.add_middleware(
 # ----------------------------------------------------
 
 app.include_router(router)
+app.include_router(auth_router)
 

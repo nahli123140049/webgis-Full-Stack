@@ -32,6 +32,22 @@ async def get_pool():
             ) from exc
     return pool
 
+
+async def init_database():
+    current_pool = await get_pool()
+    async with current_pool.acquire() as conn:
+        await conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT NOW()
+            )
+            """
+        )
+
 async def close_pool():
     global pool
     if pool:

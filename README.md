@@ -45,7 +45,7 @@ py -m venv venv
 3. Install dependency backend.
 
 ```powershell
-py -m pip install fastapi uvicorn asyncpg python-dotenv
+py -m pip install fastapi uvicorn asyncpg python-dotenv "python-jose[cryptography]" "passlib[bcrypt]" email-validator
 ```
 
 4. Pastikan file `.env` di folder `webgis-itera` berisi koneksi database yang benar.
@@ -54,6 +54,9 @@ Contoh:
 
 ```env
 DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/webgis_db
+SECRET_KEY=ganti-dengan-secret-random-yang-panjang
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=120
 ```
 
 5. Jalankan backend.
@@ -97,12 +100,21 @@ Jika frontend berjalan di port berbeda (misalnya 5173 atau 5174), backend harus 
 
 ## Endpoint Backend
 
+- POST /api/auth/register
+- POST /api/auth/login
 - GET /api/fasilitas/geojson
 - GET /api/fasilitas/
 - GET /api/fasilitas/{id}
 - POST /api/fasilitas/
 - PUT /api/fasilitas/{id}
 - DELETE /api/fasilitas/{id}
+
+## Auth JWT (Register dan Login)
+
+1. Register user baru melalui endpoint POST /api/auth/register.
+2. Login melalui endpoint POST /api/auth/login untuk mendapatkan access token.
+3. Klik tombol Authorize di Swagger docs, lalu isi token dengan format: Bearer <access_token>.
+4. Endpoint tulis data fasilitas (POST, PUT, DELETE) membutuhkan token JWT valid.
 
 ## Screenshot
 
@@ -141,6 +153,8 @@ Semua screenshot disimpan di folder `screenshots/`.
   - Pastikan tabel `fasilitas` di database berisi data
 - Backend gagal login ke PostgreSQL:
   - Cek kembali `DATABASE_URL` di `.env` (username/password/database)
+- 401 Unauthorized saat POST/PUT/DELETE fasilitas:
+  - Pastikan sudah register + login lalu klik Authorize di Swagger dengan format `Bearer <access_token>`
 
 ## Identitas
 - Nama: Nahli Saud Ramdani

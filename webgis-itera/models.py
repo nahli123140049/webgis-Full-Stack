@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 class FasilitasCreate(BaseModel):
     nama: str = Field(..., min_length=3, max_length=120)
@@ -24,3 +24,33 @@ class FasilitasCreate(BaseModel):
             return None
         cleaned = value.strip()
         return cleaned or None
+
+
+class UserRegister(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    email: EmailStr
+    password: str = Field(..., min_length=6, max_length=128)
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("username tidak boleh kosong")
+        return cleaned
+
+
+class UserLogin(BaseModel):
+    username: str = Field(..., min_length=3)
+    password: str = Field(..., min_length=6)
+
+
+class UserPublic(BaseModel):
+    id: int
+    username: str
+    email: EmailStr
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"

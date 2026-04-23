@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from database import get_pool
-from models import FasilitasCreate
+from models import FasilitasCreate, UserPublic
+from routers.auth import get_current_user
 import json
 
 router = APIRouter(
@@ -72,7 +73,7 @@ async def get_fasilitas_by_id(id: int):
 
 # 5. Endpoint Create Data (POST)
 @router.post("/", status_code=201)
-async def create_fasilitas(data: FasilitasCreate):
+async def create_fasilitas(data: FasilitasCreate, _: UserPublic = Depends(get_current_user)):
     pool = await get_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow("""
@@ -84,7 +85,7 @@ async def create_fasilitas(data: FasilitasCreate):
 
 # 6. Endpoint Update Data (PUT)
 @router.put("/{id}")
-async def update_fasilitas(id: int, data: FasilitasCreate):
+async def update_fasilitas(id: int, data: FasilitasCreate, _: UserPublic = Depends(get_current_user)):
     pool = await get_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow("""
@@ -103,7 +104,7 @@ async def update_fasilitas(id: int, data: FasilitasCreate):
 
 # 7. Endpoint Hapus Data (DELETE)
 @router.delete("/{id}")
-async def delete_fasilitas(id: int):
+async def delete_fasilitas(id: int, _: UserPublic = Depends(get_current_user)):
     pool = await get_pool()
     async with pool.acquire() as conn:
         result = await conn.execute("DELETE FROM fasilitas WHERE id = $1", id)
